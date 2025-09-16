@@ -16,7 +16,7 @@ float R1 = 10000;
 float R2 = 10000;
 float R3 = 10000;
 float inVoltage = 3.3;
-//float sampRate = 100;
+float sampRate = 10;
 
 // DAQ variables
 
@@ -28,16 +28,16 @@ int V2;
 float Vdiff;
 float resistance;
 float logR;
-//float SHa = ;
-//float SHb = ;
-//float SHc = ;
+float SHa = 0.00113;
+float SHb = 0.000235;
+float SHc = 0.0000000853;
 float temp;
 
 // Moving average variables
 
 int i;
 //const int buffsize = ;
-float tempBuff[buffsize];
+//float tempBuff[buffsize];
 float sumTemp = 0;
 float avgTemp;
 
@@ -72,8 +72,8 @@ void setup() {
     return;
   }
 
-  pinMode(A4, INPUT);
-  pinMode(A5, INPUT);
+  pinMode(A1, INPUT);
+  pinMode(A2, INPUT);
 
 }
 
@@ -81,11 +81,11 @@ void loop() {
 
   // Read voltage from Wheatstone bridge
 
-  V1 = analogRead(A5);  
-  V2 = analogRead(A4);
+  V1 = analogRead(A1);  
+  V2 = analogRead(A2);
 
   // Calculate difference between nodes (equivalent to voltage across bridge)
-  Vdiff = V1 - V2;
+  Vdiff = ((V1 - V2)*(3.3/1023));
   // 3 pts
 
 
@@ -95,8 +95,8 @@ void loop() {
 
 
   // Calculate temperature from resistance
-  // logR = log(resistance);
-  // temp = 1/(SHa + SHb*logR + SHc*(logR)^3);
+  logR = log(resistance);
+  temp = 1/(SHa + SHb*logR + SHc*pow(logR,3));
   // 10 pts
 
 
@@ -105,7 +105,7 @@ void loop() {
   // tempbuff[i] = temp;
   // sumtemp += tempbuff[i];
   // i = (i+1) % buffsize;
-  //avgtemp = sumtemp/buffsize;
+  // avgtemp = sumtemp/buffsize;
   // 10 pts
 
 
@@ -119,9 +119,9 @@ void loop() {
   Serial.print("\t");
   Serial.print(resistance);
   Serial.print("\t");
-  // Serial.print(temp);
-  // Serial.print("\t");
-  // Serial.println(avgTemp);
+  Serial.print(temp);
+  Serial.print("\t");
+  //Serial.println(avgTemp);
 
   // Uncomment to use SD card
   
@@ -136,9 +136,9 @@ void loop() {
     tempRecord.print("\t");
     tempRecord.print(resistance);
     tempRecord.print("\t");
-  //   tempRecord.print(temp);
-  //   tempRecord.print("\t");
-  //   tempRecord.println(avgTemp);
+    tempRecord.print(temp);
+    tempRecord.print("\t");
+    //tempRecord.println(avgTemp);
     tempRecord.close();
   }
   else {
@@ -146,9 +146,9 @@ void loop() {
     return;
   }
   
-  Implement sampling rate: 5 pts
+  //Implement sampling rate: 5 pts
 
-  delay();  
+  //delay();  
 
 }
 
