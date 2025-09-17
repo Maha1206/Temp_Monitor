@@ -35,11 +35,11 @@ float temp;
 
 // Moving average variables
 
-int i;
-//const int buffsize = ;
-//float tempBuff[buffsize];
+int i = 0;
+const int buffsize = 10;
+float tempBuff[buffsize];
 float sumTemp = 0;
-float avgTemp;
+float avgTemp = 0;
 
 // Save data to SD card
 
@@ -72,8 +72,8 @@ void setup() {
     return;
   }
 
-  pinMode(A1, INPUT);
-  pinMode(A2, INPUT);
+  pinMode(A5, INPUT);
+  pinMode(A4, INPUT);
 
 }
 
@@ -81,8 +81,8 @@ void loop() {
 
   // Read voltage from Wheatstone bridge
 
-  V1 = analogRead(A1);  
-  V2 = analogRead(A2);
+  V1 = analogRead(A5);  
+  V2 = analogRead(A4);
 
   // Calculate difference between nodes (equivalent to voltage across bridge)
   Vdiff = ((V1 - V2)*(3.3/1023));
@@ -101,54 +101,66 @@ void loop() {
 
 
   // Moving average
-  // sumtemp -= tempbuff[i];
-  // tempbuff[i] = temp;
-  // sumtemp += tempbuff[i];
-  // i = (i+1) % buffsize;
-  // avgtemp = sumtemp/buffsize;
+  sumTemp -= tempBuff[i];
+  tempBuff[i] = temp;
+  sumTemp += tempBuff[i];
+  i = (i+1) % buffsize;
+  avgTemp = sumTemp/buffsize;
   // 10 pts
 
 
   // Output (Serial.print prints to the serial monitor; tempRecord.print prints to the SD card)
 
+  Serial.print("V1");
   Serial.print(V1);
   Serial.print("\t");
+  Serial.print("V2");
   Serial.print(V2);
   Serial.print("\t");
+  Serial.print("Vdiff");
   Serial.print(Vdiff);
   Serial.print("\t");
+  Serial.print("resistance");
   Serial.print(resistance);
   Serial.print("\t");
+  Serial.print("Temp");
   Serial.print(temp);
   Serial.print("\t");
-  //Serial.println(avgTemp);
+  Serial.print("avgtemp");
+  Serial.println(avgTemp);
 
   // Uncomment to use SD card
   
   tempRecord = SD.open("tempLog.txt", FILE_WRITE);
   
   if (tempRecord) {
+    tempRecord.print("V1");
     tempRecord.print(V1);
     tempRecord.print("\t");
+    tempRecord.print("V2");
     tempRecord.print(V2);
     tempRecord.print("\t");
+    tempRecord.print("Vdiff");
     tempRecord.print(Vdiff);
     tempRecord.print("\t");
+    tempRecord.print("resistance");
     tempRecord.print(resistance);
     tempRecord.print("\t");
+    tempRecord.print("temp");
     tempRecord.print(temp);
     tempRecord.print("\t");
-    //tempRecord.println(avgTemp);
+    tempRecord.print("avgtemp");
+    tempRecord.println(avgTemp);
     tempRecord.close();
   }
   else {
-    Serial.println("error opening tempLog.txt");
+    //Serial.println("error opening tempLog.txt");
     return;
   }
   
   //Implement sampling rate: 5 pts
 
-  //delay();  
+  delay(10000/sampRate);  
 
 }
 
