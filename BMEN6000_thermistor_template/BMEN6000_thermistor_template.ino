@@ -29,8 +29,8 @@ float Vdiff;
 float resistance;
 float logR;
 float SHa = 0.00113;
-float SHb = 0.000235;
-float SHc = 0.0000000853;
+float SHb = 0.000234;
+float SHc = 0.0000000875;
 float temp;
 
 // Moving average variables
@@ -97,7 +97,8 @@ void loop() {
   // Calculate temperature from resistance
   logR = log(resistance);
   temp = 1/(SHa + SHb*logR + SHc*pow(logR,3));
-  // 10 pts
+  temp = temp - 273.15;
+  //10 pts
 
 
   // Moving average
@@ -160,7 +161,7 @@ void loop() {
   
   //Implement sampling rate: 5 pts
 
-  delay(10000/sampRate);  
+  delay(1000/sampRate);  
 
 }
 
